@@ -1,26 +1,15 @@
 package main
+
 import (
-	"log"
-	"fmt"
+	"demo2/agents"
 )
 
-
-var world World
 func main() {
 
-
-	world := getWorldFromFile("4by4.map")
-	best, err := world.graph.Shortest(18,26)
-	if err!=nil{
-		log.Fatal(err)
-	}
-	fmt.Println("Shortest distance ", best.Distance, " following path ", best.Path)
+	world := agents.GetWorldFromFile("4by4.map")
+	world.SetFrameRate(10)
+	world.AddCars(5)
+	go world.Loop()
 }
 
-//// TODO
-//func findClosestEdgeToPoint(randomPoint Point, edges []Edge) (Point, Edge) {
-//	var closestEdge Edge
-//	var closestPointOnEdge Point
-//	return closestPointOnEdge, closestEdge
-//}
 
