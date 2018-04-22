@@ -1,4 +1,4 @@
-package agents
+package simulator
 
 type Car struct {
 	id uint
