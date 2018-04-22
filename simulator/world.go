@@ -1,4 +1,4 @@
-package agents
+package simulator
 
 import (
 	"demo2/dijkstra"
