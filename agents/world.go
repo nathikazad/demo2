@@ -49,6 +49,12 @@ func (w *World) ShortestPath(n1_id uint, n2_id uint) ([]int, uint){
 	return best.Path, uint(best.Distance)
 }
 
+// ClosestEdgeAndCoord For coords within world space, find  closest coords on an edge on world graph
+func (w *World) ClosestEdgeAndCoord(queryPoint Coordinates) (intersect Coordinates, edgeID uint) {
+	// TODO: implement me
+	return
+}
+
 func (w *World) SetFrameRate(frameRate uint) {
 	w.frameRate = frameRate
 }
