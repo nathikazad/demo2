@@ -3,12 +3,12 @@ package simulator
 import "math"
 
 type Coordinates struct {
-	x  uint
-	y  uint
+	X  uint
+	Y  uint
 }
 
-func (c Coordinates) Distance(c2 Coordinates) int {
-	first := math.Pow(float64(c2.x)-float64(c.x), 2)
-	second := math.Pow(float64(c2.y)-float64(c.y), 2)
-	return int(math.Sqrt(first + second))
+func (c Coordinates) Distance(c2 Coordinates) float64 {
+	first := math.Pow(float64(c2.X)-float64(c.X), 2)
+	second := math.Pow(float64(c2.Y)-float64(c.Y), 2)
+	return math.Sqrt(first + second)
 }

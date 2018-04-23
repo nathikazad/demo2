@@ -37,8 +37,8 @@ func readPointsFromFile(filename string) (map[uint]*Node, map[uint]*Edge) {
 		node := nodes[uint(id)]
 		node.id = uint(id)
 		x, y := splitCommaSepNumbers(line[1])
-		node.coordinates.x = x
-		node.coordinates.y = y
+		node.coordinates.X = x
+		node.coordinates.Y = y
 		for _, point := range line[2:] {
 			nextNodeId, _ := strconv.Atoi(point)
 			if _, ok := nodes[uint(nextNodeId)]; !ok {
@@ -57,7 +57,7 @@ func readPointsFromFile(filename string) (map[uint]*Node, map[uint]*Edge) {
 	}
 
 	for _, edge := range edges {
-		edge.weight = edge.startingNode.coordinates.Distance(edge.endingNode.coordinates)
+		edge.weight = int(edge.startingNode.coordinates.Distance(edge.endingNode.coordinates))
 	}
 
 	if err := scanner.Err(); err != nil {
