@@ -6,8 +6,6 @@ import (
 )
 
 func main() {
-
-
 	world := simulator.GetWorldFromFile("4by4.map")
 	path, distance := world.ShortestPath(18, 26)
 	fmt.Println(path, " ", distance)
@@ -21,7 +19,6 @@ func main() {
 			fmt.Println(v.Id, " ", v.Coordinates, " ", v.Orientation)
 		}
 	}
-
 }
 
 //

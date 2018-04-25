@@ -141,15 +141,17 @@ func (e *Edge) checkIntersect(query Coordinates) (intersect Coordinates, distanc
   } else {  // In perpendicular region; find intersection on Edge
     // Check for straight lines to ease calculations
     if (x1 == x2) {
-      intersect.X = uint(x1)
-      intersect.Y = uint(yQuery)
+      intersect.X = uint(math.Round(x1))
+      intersect.Y = uint(math.Round(yQuery))
 
     } else if (y1 == y2) {
-      intersect.X = uint(xQuery)
-      intersect.Y = uint(y1)
+      intersect.X = uint(math.Round(xQuery))
+      intersect.Y = uint(math.Round(y1))
     } else {
-      intersect.X = uint((mEdge * x1 - mPerp * xQuery + yQuery - y1) / (mEdge - mPerp))
-      intersect.Y = uint(mPerp * (float64(intersect.X) - xQuery) + yQuery)
+      intX := float64((mEdge * x1 - mPerp * xQuery + yQuery - y1) / (mEdge - mPerp))
+      intY := float64(mPerp * (float64(intersect.X) - xQuery) + yQuery)
+      intersect.X = uint(math.Round(intX))
+      intersect.Y = uint(math.Round(intY))
     }
     distance = intersect.Distance(query)
   }
