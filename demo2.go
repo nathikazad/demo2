@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"log"
 	"demo2/simulator"
-	"fmt"
 	"strconv"
 )
 
@@ -49,17 +48,17 @@ func main() {
 	}()
 
 	world := simulator.GetWorldFromFile("maps/4by4.map")
-	world.SetFrameRate(10)
-	world.UnitsPerMove(5)
+	world.SetFrameRate(50)
+	world.SetUnitsPerMove(1)
 	world.AddCars(2)
 	go world.Loop()
 	receiveChannel := world.GetBroadcastChannel()
 	for {
 		carStates := <-receiveChannel
 		for _, v := range carStates {
-			fmt.Println(v.Id, " ", v.Coordinates, " ", v.Orientation)
+			//fmt.Println(v.Id, " ", v.Coordinates, " ", v.Orientation)
 			broadcast <- Message{Type:"Car", Id:strconv.Itoa(int(v.Id)), X:strconv.Itoa(int(v.Coordinates.X)),
-									Y:strconv.Itoa(int(v.Coordinates.Y)), Orientation:strconv.Itoa(v.Orientation)}
+									Y:strconv.Itoa(int(v.Coordinates.Y)), Orientation:strconv.Itoa(int(v.Orientation))}
 		}
 	}
 }

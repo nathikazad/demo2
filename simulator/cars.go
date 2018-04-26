@@ -1,5 +1,10 @@
 package simulator
 
+import (
+	"math/rand"
+	"time"
+)
+
 type Car struct {
 	id uint
 	path []uint
@@ -34,7 +39,7 @@ type CarCommand struct {
 type CarState struct {
 	Id uint
 	Coordinates Coordinates
-	Orientation int
+	Orientation float64
 	edgeId uint
 	presentAction PresentAction
 }
@@ -60,7 +65,10 @@ func (c *Car) produceNextCommand(map[*Car]CarState) CarCommand {
 	case StoppedAtTurn:
 		_, endNodeId := c.world.GetStartAndEndNodeOfEdge(c.currentState.edgeId)
 		adjacentNodeIds := c.world.GetAdjacentNodeIds(endNodeId)
-		return CarCommand{id:c.id, commandAction:Turn, arg0:adjacentNodeIds[0]}
+		s1 := rand.NewSource(time.Now().UnixNano())
+		r1 := rand.New(s1)
+		choosenNodeId := adjacentNodeIds[uint(r1.Int() % len(adjacentNodeIds))]
+		return CarCommand{id:c.id, commandAction:Turn, arg0:choosenNodeId}
 	default :
 		return CarCommand{id:c.id, commandAction:Turn, arg0:0}
 	}

@@ -12,7 +12,7 @@ type Edge struct {
 	id uint
 	startingNode *Node
 	endingNode   *Node
-	angle int
+	angle float64
 	weight int
 }
 
@@ -54,7 +54,7 @@ func (w *World) SetFrameRate(frameRate uint) {
 	w.frameRate = frameRate
 }
 
-func (w *World) UnitsPerMove(unitsPerMove uint) {
+func (w *World) SetUnitsPerMove(unitsPerMove uint) {
 	w.unitsPerMove = unitsPerMove
 }
 
@@ -130,9 +130,11 @@ func (w *World) executeCommands() {
 		switch carCommand.commandAction {
 		case Move:
 			if carState.presentAction == Moving || carState.presentAction == Stopped {
+
 				endNodeCoordinates := w.edges[carState.edgeId].endingNode.coordinates
 				if carState.Coordinates.Distance(endNodeCoordinates) > float64(w.unitsPerMove) {
 					carState.Coordinates = carState.Coordinates.ProjectInDirection(int(w.unitsPerMove), endNodeCoordinates)
+					carState.Orientation = determineOrientation(carState.Orientation, w.edges[carState.edgeId].angle, 1)
 				} else {
 					carState.Coordinates = endNodeCoordinates
 					carState.presentAction = StoppedAtTurn
@@ -153,7 +155,6 @@ func (w *World) executeCommands() {
 				}
 				if nextNode != nil {
 					carState.edgeId = currentNode.nextEdges[nextNode].id
-					carState.Orientation = currentNode.nextEdges[nextNode].angle
 					carState.presentAction = Moving
 				}	else {
 					fmt.Println("For car id:", carCommand.id, "invalid node selection", carCommand.arg0)

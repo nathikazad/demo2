@@ -1,6 +1,8 @@
 package simulator
 
-import "math"
+import (
+	"math"
+)
 
 type Coordinates struct {
 	X  uint
@@ -17,6 +19,35 @@ func (c1 Coordinates) Angle(c2 Coordinates) float64 {
 	first := float64(c2.X)-float64(c1.X)
 	second := float64(c2.Y)-float64(c1.Y)
 	return math.Atan2(second, first) * 180 / math.Pi
+}
+
+func determineOrientation (currentAngle float64, desiredAngle float64, steps float64) float64 {
+	error := (desiredAngle-currentAngle)
+	newAngle := 0.0
+	if math.Abs(error)  > steps {
+		if error > 0 {
+			if error < 180 {
+				newAngle = currentAngle + steps
+			} else {
+				newAngle = currentAngle - steps
+			}
+		} else {
+			if error > -180 {
+				newAngle = currentAngle - steps
+			} else {
+				newAngle = currentAngle + steps
+			}
+		}
+	} else {
+		newAngle = desiredAngle
+	}
+	if newAngle > 360 {
+		newAngle -= 360
+	} else if newAngle < 0 {
+		newAngle += 360
+	}
+	return newAngle
+
 }
 
 // ProjectInDirection project a new pair of coordinates some distance from current position
