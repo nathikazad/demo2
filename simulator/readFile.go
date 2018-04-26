@@ -50,7 +50,8 @@ func readPointsFromFile(filename string) (map[uint]*Node, map[uint]*Edge) {
 			if node.nextEdges == nil {
 				node.nextEdges = make(map[*Node]*Edge)
 			}
-			edge := Edge{id:uint(len(edges)), startingNode:node, endingNode:nextNode}
+			angle := node.coordinates.Angle(nextNode.coordinates)
+			edge := Edge{id:uint(len(edges)), startingNode:node, endingNode:nextNode, angle:int(angle)}
 			node.nextEdges[nextNode] = &edge
 			edges[edge.id] = &edge
 		}

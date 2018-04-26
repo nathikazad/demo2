@@ -1,0 +1,23 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+div#Map {
+	position: relative;
+	float: left;
+	margin-left: 5%;
+	margin-top: 5%;
+	border: 1px solid;
+}
+
+div#Cars {
+	position: absolute;
+    top: -55px ;
+    left: -55px ;
+}
+
+img#Car1 {
+	position: absolute;
+}

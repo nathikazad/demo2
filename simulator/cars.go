@@ -5,6 +5,7 @@ type Car struct {
 	path []uint
 	currentState CarState
 	StateReceiver chan map[*Car]CarState
+	world *World
 }
 
 type CommandAction int
@@ -19,8 +20,9 @@ type PresentAction int
 const (
 	Moving PresentAction = 0
 	Stopped PresentAction = 1
-	Turning PresentAction = 2
-	Parked PresentAction = 3
+	StoppedAtTurn PresentAction = 2
+	Turning PresentAction = 3
+	Parked PresentAction = 4
 )
 
 type CarCommand struct {
@@ -32,7 +34,7 @@ type CarCommand struct {
 type CarState struct {
 	Id uint
 	Coordinates Coordinates
-	Orientation uint
+	Orientation int
 	edgeId uint
 	presentAction PresentAction
 }
@@ -43,11 +45,24 @@ func (c *Car) startLoop(commandSender chan<- CarCommand) {
 		for {
 			carStates := <- c.StateReceiver
 			c.currentState = carStates[c]
-			commandSender <- c.produceNextCommand()
+			commandSender <- c.produceNextCommand(carStates)
 		}
 	}()
 }
 
-func (c *Car) produceNextCommand() CarCommand {
-	return CarCommand{c.id, Move, 0}
+func (c *Car) produceNextCommand(map[*Car]CarState) CarCommand {
+	switch c.currentState.presentAction {
+	case Moving:
+		// Check for collision
+		return CarCommand{c.id, Move, 0}
+	case Stopped:
+		return CarCommand{c.id, Move, 0}
+	case StoppedAtTurn:
+		_, endNodeId := c.world.GetStartAndEndNodeOfEdge(c.currentState.edgeId)
+		adjacentNodeIds := c.world.GetAdjacentNodeIds(endNodeId)
+		return CarCommand{id:c.id, commandAction:Turn, arg0:adjacentNodeIds[0]}
+	default :
+		return CarCommand{id:c.id, commandAction:Turn, arg0:0}
+	}
+
 }

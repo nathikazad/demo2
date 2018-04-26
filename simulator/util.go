@@ -1,7 +1,6 @@
 package simulator
 
 import "math"
-import "fmt"
 
 type Coordinates struct {
 	X  uint
@@ -12,6 +11,12 @@ func (c1 Coordinates) Distance(c2 Coordinates) float64 {
 	first := math.Pow(float64(c2.X)-float64(c1.X), 2)
 	second := math.Pow(float64(c2.Y)-float64(c1.Y), 2)
 	return math.Sqrt(first + second)
+}
+
+func (c1 Coordinates) Angle(c2 Coordinates) float64 {
+	first := float64(c2.X)-float64(c1.X)
+	second := float64(c2.Y)-float64(c1.Y)
+	return math.Atan2(second, first) * 180 / math.Pi
 }
 
 // ProjectInDirection project a new pair of coordinates some distance from current position
