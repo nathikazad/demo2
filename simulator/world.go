@@ -130,7 +130,6 @@ func (w *World) executeCommands() {
 		switch carCommand.commandAction {
 		case Move:
 			if carState.presentAction == Moving || carState.presentAction == Stopped {
-
 				endNodeCoordinates := w.edges[carState.edgeId].endingNode.coordinates
 				if carState.Coordinates.Distance(endNodeCoordinates) > float64(w.unitsPerMove) {
 					carState.Coordinates = carState.Coordinates.ProjectInDirection(int(w.unitsPerMove), endNodeCoordinates)

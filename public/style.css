@@ -18,6 +18,6 @@ div#Cars {
     left: -55px ;
 }
 
-img#Car1 {
+img.carimgs {
 	position: absolute;
 }

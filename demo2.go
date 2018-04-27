@@ -50,7 +50,7 @@ func main() {
 	world := simulator.GetWorldFromFile("maps/4by4.map")
 	world.SetFrameRate(50)
 	world.SetUnitsPerMove(1)
-	world.AddCars(2)
+	world.AddCars(4)
 	go world.Loop()
 	receiveChannel := world.GetBroadcastChannel()
 	for {
