@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"log"
-	"demo2/simulator"
+	"demo2/go-packages/simulator"
 	"strconv"
 )
 

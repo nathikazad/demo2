@@ -1,7 +1,7 @@
 package simulator
 
 import (
-	"demo2/dijkstra"
+	"demo2/go-packages/dijkstra"
 	"time"
 	"math/rand"
 	"fmt"

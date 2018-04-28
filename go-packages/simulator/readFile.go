@@ -6,7 +6,7 @@ import (
 	"bufio"
 	"strings"
 	"strconv"
-	"demo2/dijkstra"
+	"demo2/go-packages/dijkstra"
 
 )
 
