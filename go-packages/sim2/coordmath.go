@@ -4,6 +4,8 @@ import (
   "math"
 )
 
+// coordmath - Descrbes float-based coordinates with utility transforms
+
 // Coords - Structure for generic 2D coordinates.
 type Coords struct {
   X float64
