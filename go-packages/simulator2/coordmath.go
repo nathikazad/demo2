@@ -29,8 +29,8 @@ func (c1 Coords) Angle(c2 Coords) float64 {
 // UnitVector - Calculate the unit vector (starting at c1) created from c1 to c2.
 func (c1 Coords) UnitVector(c2 Coords) Coords {
   // Find vector components from c1 -> c2
-  dx = c2.X - c1.X
-  dy = c2.Y - c1.Y
+  dx := c2.X - c1.X
+  dy := c2.Y - c1.Y
 
   // Find magnitude of vector from c1 -> c2
   mag := c1.Distance(c2)
