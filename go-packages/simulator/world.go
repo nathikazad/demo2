@@ -171,6 +171,10 @@ func (w *World) ShortestPath(n1_id uint, n2_id uint) ([]int, uint){
 	return best.Path, uint(best.Distance)
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// NOTE: THE FOLLOWING SHOULD BE RELOCATED TO THE NEW CAR MODULE
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 // TODO: remove commented-out test prints
 // TODO: proper helper function breakdown of ClosestEdgeAndCoord
 // TODO: proper test file world_test.go

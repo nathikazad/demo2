@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -102,4 +103,17 @@ func handleMessages() {
 		}
 	}
 }
+//*/
 
+// Section for testing
+//*
+import (
+  "demo2/go-packages/sim2"
+  "fmt"
+)
+
+func main() {
+  d := sim2.GetDigraphFromFile("maps/4by4.map")
+  fmt.Println(d)
+}
+//*/
