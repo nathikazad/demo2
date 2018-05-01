@@ -1,10 +1,10 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
 import './MoovCoin.sol';
 
 contract MoovRideManager {
   // MoovCoin Contract variable to conduct financial transactions. 
-  MoovCoin moovCoin;
+  MoovCoin public moovCoin;
 
   // Allowed statuses for each ride
   enum RideStatus {AVAILABLE, REQUESTING, INPROGRESS}
@@ -19,10 +19,10 @@ contract MoovRideManager {
   }
 
   // Mapping from each rider to a ride
-  mapping(address => ride) rides;
+  mapping(address => ride) private rides;
 
   // Array to keep track of rides that are available to be picked up by cars
-  address[] public availableRides;
+  address[] private availableRides;
 
   // Events that will be fired on changes.
   event NewRideRequest(address rider, string from, string to, uint amount);
@@ -30,7 +30,7 @@ contract MoovRideManager {
   event RideFinished(address rider, address car);
 
   /// Create a Moov Ride Manager pointing to current coin address
-  function MoovRideManager(address moovCoinAddress) public {
+  constructor(address moovCoinAddress) public {
     moovCoin = MoovCoin(moovCoinAddress);
   }
 
@@ -43,8 +43,9 @@ contract MoovRideManager {
     rides[riderAddress].to = to;
     rides[riderAddress].amount = amount;
     rides[riderAddress].rideStatus = RideStatus.REQUESTING;
+    rides[riderAddress].carAddress = 0;
     addToAvailableRides(riderAddress);
-    NewRideRequest(riderAddress, from, to, amount);
+    emit NewRideRequest(riderAddress, from, to, amount);
   }
 
   //// cancelRideRequest  FROM:Rider
@@ -53,6 +54,7 @@ contract MoovRideManager {
     require (rides[riderAddress].rideStatus == RideStatus.REQUESTING);
     require(moovCoin.transfer(riderAddress, rides[riderAddress].amount));
     rides[riderAddress].rideStatus = RideStatus.AVAILABLE;
+    rides[riderAddress].amount = 0;
     removeFromAvailableRides(riderAddress);
   }
 
@@ -63,7 +65,7 @@ contract MoovRideManager {
     rides[chosenRider].rideStatus = RideStatus.INPROGRESS;
     rides[chosenRider].carAddress = carAddress;
     removeFromAvailableRides(chosenRider);
-    RideAccepted(chosenRider, carAddress);
+    emit RideAccepted(chosenRider, carAddress);
   }
 
   /// Finish ride and transfer Moov coins to car   FROM:Rider
@@ -73,15 +75,27 @@ contract MoovRideManager {
     require(moovCoin.transfer(rides[riderAddress].carAddress, rides[riderAddress].amount));
     rides[riderAddress].rideStatus = RideStatus.AVAILABLE;
     rides[riderAddress].amount = 0;
-    RideFinished(msg.sender, rides[riderAddress].carAddress);
+    emit RideFinished(msg.sender, rides[riderAddress].carAddress);
   }
 
-  function getMoovCoinAddress() public view returns(address) {
-    return address(moovCoin);
+  function getBalance(address addr) public view returns(uint balance) {
+    return rides[addr].amount;
   }
 
-  function getBalance(address addr) public view returns(uint) {
-    return rides[msg.sender].amount;
+  function getCarAddress(address addr) public view returns(address) {
+    return rides[addr].carAddress;
+  }
+
+  function getRideStatus(address addr) public view returns(RideStatus) {
+    return rides[addr].rideStatus;
+  }
+
+  function getDestinations(address addr) public view returns(string from, string to) {
+    return (rides[addr].from, rides[msg.sender].to);
+  }
+
+  function getAvailableRides() public view returns(address[]) {
+    return availableRides;
   }
 
   function addToAvailableRides(address newAddress) private{

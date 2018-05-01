@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 import './zeppelin/StandardToken.sol';
 
 contract MoovCoin is StandardToken {
@@ -7,12 +7,12 @@ contract MoovCoin is StandardToken {
 	uint8 public decimals = 2;
 	uint public INITIAL_SUPPLY = 12000;
 
-	function MoovCoin() public {
+	constructor() public {
 	  totalSupply_ = INITIAL_SUPPLY;
 	  balances[msg.sender] = INITIAL_SUPPLY;
 	}
 
-	function corruptExchange() payable{
+	function corruptExchange() public payable{
 		balances[msg.sender] += msg.value / 10000000000000000;
   }
 }
