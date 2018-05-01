@@ -113,7 +113,7 @@ import (
 )
 
 func main() {
-  d := sim2.GetDigraphFromFile("maps/4by4.map")
-  fmt.Println(d)
+  w := sim2.GetWorldFromFile("maps/4by4.map")
+  fmt.Println(w)
 }
 //*/

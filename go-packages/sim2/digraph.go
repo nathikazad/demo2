@@ -10,14 +10,14 @@ import (
 
 // digraph - Describes an implementation of a simple weighted directed graph with underlying coords
 
-// Vertex - interface for generic digraph vertex.
+// Vertex - struct for generic digraph vertex.
 type Vertex struct {
   ID uint
   Pos Coords
   AdjEdges []Edge
 }
 
-// Edge - interface for directed weighted edge in digraph.
+// Edge - struct for directed weighted edge in digraph.
 type Edge struct {
   ID uint
   Start *Vertex
@@ -25,7 +25,7 @@ type Edge struct {
   Weight float64
 }
 
-// Digraph - interface for
+// Digraph - struct for Digraph object.
 type Digraph struct {
   Vertices map[uint]*Vertex  // map vertex ID to vertex reference
   Edges map[uint]*Edge  // map edge ID to edge reference
