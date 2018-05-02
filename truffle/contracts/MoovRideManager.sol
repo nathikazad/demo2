@@ -90,7 +90,7 @@ contract MoovRideManager {
     return rides[addr].rideStatus;
   }
 
-  function getDestinations(address addr) public view returns(string from, string to) {
+  function getLocations(address addr) public view returns(string from, string to) {
     return (rides[addr].from, rides[msg.sender].to);
   }
 

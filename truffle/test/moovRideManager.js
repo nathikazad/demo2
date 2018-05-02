@@ -41,7 +41,7 @@ contract('MoovRideManager', function(accounts) {
     assert.ok(actual.eq(expected), "Ride status is not in requesting");
 
     // Assert destinations
-    actual = await mrm.getDestinations(riderAccount)
+    actual = await mrm.getLocations(riderAccount)
     let expected_from = "Earth";
     let expected_to = "Mars";
     assert.equal(actual[0], expected_from, "from destination does not match");
