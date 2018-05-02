@@ -113,6 +113,8 @@ import (
   "fmt"
 )
 
+// TODO: remove commented-out test prints and make proper test files
+
 func main() {
   fmt.Println("Starting demo2 simulation")
 

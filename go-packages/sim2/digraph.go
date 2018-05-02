@@ -98,6 +98,7 @@ func GetDigraphFromFile(fname string) (d *Digraph) {
   return d
 }
 
+// splitCSV - Split a CSV pair into constituent values.
 func splitCSV(line string) (float64, float64) {
 	numbers := strings.Split(line,",")
 	if len(numbers) != 2 {
