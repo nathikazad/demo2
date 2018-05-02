@@ -2,6 +2,7 @@ package sim2
 
 import (
   "time"
+  "fmt"
 )
 
 // world - Describes world state: position and velocity of all cars in simulation
@@ -16,10 +17,9 @@ type CarInfo struct {
 type World struct {
   Graph *Digraph
   CarStates map[uint]CarInfo
+  LastTime time.Time
 
-  dtS float64
   fps float64
-  lastTime time.Time
   syncChans map[uint]chan bool  // Index by actor ID for channel to/from that actor
   recvChans map[uint]chan CarInfo  // Index by actor ID for channel to/from that actor
 }
@@ -30,7 +30,6 @@ func NewWorld() *World {
   w.Graph = NewDigraph()
   w.CarStates = make(map[uint]CarInfo)
 
-  w.dtS = float64(0)
   w.fps = float64(1)
   w.syncChans = make(map[uint]chan bool)
   w.recvChans = make(map[uint]chan CarInfo)
@@ -64,20 +63,16 @@ func (w *World) RegisterCar(ID uint) (chan bool, chan CarInfo, bool) {
   return w.syncChans[ID], w.recvChans[ID], true
 }
 
-// TODO: UnregisterCar if necessary
-
-// GetDtS - Fetch time duration since last update of the simulation, in [s].
-func (w *World) GetDtS() float64 {
-  return w.dtS
-}
+// TODO: an UnregisterCar func if necessary
 
 // LoopWorld - Begin the world simulation execution loop
 func (w *World) LoopWorld() {
-  w.lastTime = time.Now()
+  w.LastTime = time.Now()
+  counter := uint64(0)
   for {
-    // Calculate dt
-    w.dtS = time.Since(w.lastTime).Seconds()
-    w.lastTime = time.Now()
+    fmt.Println("Iteration", counter)
+    w.LastTime = time.Now()
+    timer := time.NewTimer(time.Duration(1000/w.fps) * time.Millisecond)
 
     // Send out sync flag = true for each registered car
     for ID := range w.CarStates {
@@ -85,10 +80,34 @@ func (w *World) LoopWorld() {
     }
 
     // Car coroutines should now process current world state
+    // TODO: JSON output should be written now, need a different sync chan to inform it
 
-    // Wait for all car data or frame refresh
-    // TODO continue here
+    // Set up routines to catch incoming car data
+    recvDone := make(chan bool, len(w.recvChans))
+    for ID, carChan := range w.recvChans {
+      go func(idx uint, dataChan chan CarInfo, dstMap map[uint]CarInfo) {
+        data := <- dataChan
+        fmt.Println("World got new data on index", idx, ":", data)
+        dst := dstMap[idx]
+        dst.Pos = data.Pos
+        dst.Vel = data.Vel
+        recvDone <- true
+        fmt.Println("World recvDone sent on", idx)
+      }(ID, carChan, w.CarStates)
+    }
+
+    // Wait for all channels to report
+    for i := 0; i < len(w.recvChans); i++ {
+      <-recvDone
+      fmt.Println("World recvDone recv on", i)
+    }
+    fmt.Println("World done getting all recvDone")
+
+    counter++
+
+    // Wait for frame update
+    <-timer.C
+
+    // World loop iterates
   }
 }
-
-// TODO JSON output externally, need a new channel exposed to sync that operation as well

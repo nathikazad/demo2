@@ -110,10 +110,33 @@ func handleMessages() {
 import (
   "demo2/go-packages/sim2"
   "fmt"
+  "time"
 )
 
 func main() {
   w := sim2.GetWorldFromFile("maps/4by4.map")
   fmt.Println(w)
+
+  ID := uint(0)
+  syncChan, updateChan, ok0 := w.RegisterCar(ID)
+  fmt.Println("Register '0' #1 successful?", ok0)
+  _, _, ok1 := w.RegisterCar(ID)
+  fmt.Println("Register '0' #2 successful?", ok1)
+
+  go func(world *sim2.World, idx uint, sync chan bool, update chan sim2.CarInfo) {
+    for {
+      <-sync
+      fmt.Println("Car", ID, ": got sync")
+      fmt.Println("Car", ID, ": DT - ", time.Since(w.LastTime))
+      update <- sim2.CarInfo{sim2.Coords{1,2}, sim2.Coords{3,4}}
+      fmt.Println("Car", ID, ": sent empty car info")
+    }
+  }(w, ID, syncChan, updateChan)
+
+  go w.LoopWorld()
+
+  for {
+    <-chan bool (nil)
+  }  // Do work in the coroutines
 }
 //*/
