@@ -2,7 +2,7 @@ package sim2
 
 import (
   "time"
-  "fmt"
+  //"fmt"
 )
 
 // world - Describes world state: position and velocity of all cars in simulation
@@ -17,9 +17,8 @@ type CarInfo struct {
 type World struct {
   Graph *Digraph
   CarStates map[uint]CarInfo
-  LastTime time.Time
+  Fps float64
 
-  fps float64
   syncChans map[uint]chan bool  // Index by actor ID for channel to/from that actor
   recvChans map[uint]chan CarInfo  // Index by actor ID for channel to/from that actor
 }
@@ -30,7 +29,7 @@ func NewWorld() *World {
   w.Graph = NewDigraph()
   w.CarStates = make(map[uint]CarInfo)
 
-  w.fps = float64(1)
+  w.Fps = float64(1)
   w.syncChans = make(map[uint]chan bool)
   w.recvChans = make(map[uint]chan CarInfo)
   return w
@@ -57,7 +56,7 @@ func (w *World) RegisterCar(ID uint) (chan bool, chan CarInfo, bool) {
   }
 
   // Allocate new channels for registered car
-  w.CarStates[ID] = CarInfo{}
+  w.CarStates[ID] = CarInfo{}  // TODO: randomize/control car location on startup
   w.syncChans[ID] = make(chan bool, 1)  // Buffer up to one output
   w.recvChans[ID] = make(chan CarInfo, 1)  // Buffer up to one input
   return w.syncChans[ID], w.recvChans[ID], true
@@ -67,12 +66,10 @@ func (w *World) RegisterCar(ID uint) (chan bool, chan CarInfo, bool) {
 
 // LoopWorld - Begin the world simulation execution loop
 func (w *World) LoopWorld() {
-  w.LastTime = time.Now()
   counter := uint64(0)
   for {
-    fmt.Println("Iteration", counter)
-    w.LastTime = time.Now()
-    timer := time.NewTimer(time.Duration(1000/w.fps) * time.Millisecond)
+    //fmt.Println("Iteration", counter)
+    timer := time.NewTimer(time.Duration(1000/w.Fps) * time.Millisecond)
 
     // Send out sync flag = true for each registered car
     for ID := range w.CarStates {
@@ -87,21 +84,23 @@ func (w *World) LoopWorld() {
     for ID, carChan := range w.recvChans {
       go func(idx uint, dataChan chan CarInfo, dstMap map[uint]CarInfo) {
         data := <- dataChan
-        fmt.Println("World got new data on index", idx, ":", data)
+        //fmt.Println("World got new data on index", idx, ":", data)
         dst := dstMap[idx]
+        // TODO: any validation of data here
+        // TODO: also consider a clone method for CarInfo for future-proofing copy assign
         dst.Pos = data.Pos
         dst.Vel = data.Vel
         recvDone <- true
-        fmt.Println("World recvDone sent on", idx)
+        //fmt.Println("World recvDone sent on", idx)
       }(ID, carChan, w.CarStates)
     }
 
     // Wait for all channels to report
     for i := 0; i < len(w.recvChans); i++ {
       <-recvDone
-      fmt.Println("World recvDone recv on", i)
+      //fmt.Println("World recvDone recv on", i)
     }
-    fmt.Println("World done getting all recvDone")
+    //fmt.Println("World done getting all recvDone")
 
     counter++
 

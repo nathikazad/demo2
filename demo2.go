@@ -109,34 +109,45 @@ func handleMessages() {
 //*
 import (
   "demo2/go-packages/sim2"
+  "log"
   "fmt"
-  "time"
 )
 
 func main() {
+  fmt.Println("Starting demo2 simulation")
+
+  // Instantiate world
   w := sim2.GetWorldFromFile("maps/4by4.map")
-  fmt.Println(w)
+  w.Fps = float64(1)
 
-  ID := uint(0)
-  syncChan, updateChan, ok0 := w.RegisterCar(ID)
-  fmt.Println("Register '0' #1 successful?", ok0)
-  _, _, ok1 := w.RegisterCar(ID)
-  fmt.Println("Register '0' #2 successful?", ok1)
-
-  go func(world *sim2.World, idx uint, sync chan bool, update chan sim2.CarInfo) {
-    for {
-      <-sync
-      fmt.Println("Car", ID, ": got sync")
-      fmt.Println("Car", ID, ": DT - ", time.Since(w.LastTime))
-      update <- sim2.CarInfo{sim2.Coords{1,2}, sim2.Coords{3,4}}
-      fmt.Println("Car", ID, ": sent empty car info")
+  // Instantiate cars
+  numCars := uint(1)
+  cars := make([]*sim2.Car, numCars)
+  for i := uint(0); i < numCars; i++ {
+    // Request to register new car from World
+    syncChan, updateChan, ok := w.RegisterCar(i)
+    if !ok {
+      log.Printf("error: failed to register car")
     }
-  }(w, ID, syncChan, updateChan)
 
+    // Construct car
+    cars[i] = sim2.NewCar(i, w, syncChan, updateChan)
+  }
+
+  // Instantiate JSON output
+  // TODO: this
+
+  // Begin World operation
   go w.LoopWorld()
 
-  for {
-    <-chan bool (nil)
-  }  // Do work in the coroutines
+  // Begin Car operation
+  for i := uint(0); i < numCars; i++ {
+    go cars[i].CarLoop()
+  }
+
+  // Begin JSON output operation
+  // TODO: this
+
+  for {}  // Do work in the coroutines
 }
 //*/
