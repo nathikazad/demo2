@@ -2,6 +2,7 @@ package sim2
 
 import (
   "time"
+  "strconv"
   //"fmt"
 )
 
@@ -9,8 +10,10 @@ import (
 
 // CarInfo - struct to contain position and velocity information for a simulated car.
 type CarInfo struct {
+  ID uint
   Pos Coords
   Vel Coords  // with respect to current position, offset for a single frame
+  Dir Coords  // unit vector with respect to current position
 }
 
 // World - struct to contain all relevat world information in simulation.
@@ -21,6 +24,7 @@ type World struct {
 
   syncChans map[uint]chan bool  // Index by actor ID for channel to/from that actor
   recvChans map[uint]chan CarInfo  // Index by actor ID for channel to/from that actor
+  webChan chan Message
 }
 
 // NewWorld - Constructor for valid World object.
@@ -32,6 +36,7 @@ func NewWorld() *World {
   w.Fps = float64(1)
   w.syncChans = make(map[uint]chan bool)
   w.recvChans = make(map[uint]chan CarInfo)
+  // NOTE webChan is nil until registered
   return w
 }
 
@@ -56,13 +61,27 @@ func (w *World) RegisterCar(ID uint) (chan bool, chan CarInfo, bool) {
   }
 
   // Allocate new channels for registered car
-  w.CarStates[ID] = CarInfo{}  // TODO: randomize/control car location on startup
+  w.CarStates[ID] = CarInfo{ ID:ID }  // TODO: randomize/control car location on startup
   w.syncChans[ID] = make(chan bool, 1)  // Buffer up to one output
   w.recvChans[ID] = make(chan CarInfo, 1)  // Buffer up to one input
   return w.syncChans[ID], w.recvChans[ID], true
 }
 
 // TODO: an UnregisterCar func if necessary
+
+// RegisterWeb - If not already registered, allocate a channel for web output and true OK.
+func (w *World) RegisterWeb() (chan Message, bool) {
+  // Check for invalid world or previous allocation
+  if w == nil || w.webChan != nil{
+    return nil, false
+  }
+
+  // Allocate new channel for registered web output
+  w.webChan = make(chan Message)
+  return w.webChan, true
+}
+
+// TODO: an UnregisterWeb func if necessary
 
 // LoopWorld - Begin the world simulation execution loop
 func (w *World) LoopWorld() {
@@ -77,7 +96,15 @@ func (w *World) LoopWorld() {
     }
 
     // Car coroutines should now process current world state
-    // TODO: JSON output should be written now, need a different sync chan to inform it
+    for _, car := range w.CarStates {
+      w.webChan <- Message{
+        Type:"Car",
+        ID:strconv.Itoa(int(car.ID)),
+        X:strconv.Itoa(int(car.Pos.X)),
+        Y:strconv.Itoa(int(car.Pos.Y)),
+        Orientation:strconv.Itoa(int(Coords{0,0}.Angle(car.Dir))), 
+      }
+    }
 
     // Set up routines to catch incoming car data
     recvDone := make(chan bool, len(w.recvChans))
@@ -85,11 +112,9 @@ func (w *World) LoopWorld() {
       go func(idx uint, dataChan chan CarInfo, dstMap map[uint]CarInfo) {
         data := <- dataChan
         //fmt.Println("World got new data on index", idx, ":", data)
-        dst := dstMap[idx]
         // TODO: any validation of data here
         // TODO: also consider a clone method for CarInfo for future-proofing copy assign
-        dst.Pos = data.Pos
-        dst.Vel = data.Vel
+        dstMap[idx] = data
         recvDone <- true
         //fmt.Println("World recvDone sent on", idx)
       }(ID, carChan, w.CarStates)

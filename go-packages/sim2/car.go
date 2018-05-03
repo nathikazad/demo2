@@ -31,6 +31,7 @@ func NewCar(id uint, w *World, sync chan bool, send chan CarInfo) *Car {
 
 // CarLoop - Begin the car simulation execution loop
 func (c *Car) CarLoop() {
+  posx := float64(0)  // TODO remove
   for {
     // Block waiting for next sync event
     <-c.syncChan
@@ -50,8 +51,10 @@ func (c *Car) CarLoop() {
 
     // Send movement update request to World
     // TODO: replace this with real update
-    c.sendChan <- CarInfo{ Pos:Coords{0,0}, Vel:Coords{0,0} }
-    //fmt.Println("Car", c.id, ": sent update")
+    posx += 5
+    inf := CarInfo{ ID:c.id, Pos:Coords{posx,0}, Vel:Coords{0,0}, Dir:Coords{1,0} }
+    c.sendChan <- inf
+    //fmt.Println("Car", c.id, ": sent update", inf)
   }
 }
 

@@ -136,8 +136,12 @@ func main() {
     cars[i] = sim2.NewCar(i, w, syncChan, updateChan)
   }
 
-  // Instantiate JSON output
-  // TODO: this
+  // Instantiate JSON web output
+  webChan, ok := w.RegisterWeb()
+  if !ok {
+    log.Printf("error: failed to register web output")
+  }
+  web := sim2.NewWebSrv(webChan)
 
   // Begin World operation
   go w.LoopWorld()
@@ -147,8 +151,8 @@ func main() {
     go cars[i].CarLoop()
   }
 
-  // Begin JSON output operation
-  // TODO: this
+  // Begin JSON web output operation
+  go web.LoopWebSrv()
 
   for {}  // Do work in the coroutines
 }

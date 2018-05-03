@@ -9,11 +9,9 @@ ws.addEventListener('message', function(e) {
     document.getElementById('Car'+msg.id).style.transform  = "rotate("+(parseInt(msg.orientation)+180)+"deg)";
 });
 
-var example = document.getElementById('Map'); 
-example.onclick = function(e) { 
-    var x = e.pageX - this.offsetLeft; 
-    var y = e.pageY - this.offsetTop; 
+var example = document.getElementById('Map');
+example.onclick = function(e) {
+    var x = e.pageX - this.offsetLeft;
+    var y = e.pageY - this.offsetTop;
     console.log(x+" "+y)
 }
-
-

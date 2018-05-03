@@ -26,8 +26,6 @@ func (c1 Coords) Angle(c2 Coords) float64 {
   return math.Atan2(dy, dx) * 180 / math.Pi
 }
 
-// TODO: determine if old determineOrientation() should live here
-
 // UnitVector - Calculate the unit vector (starting at c1) created from c1 to c2.
 func (c1 Coords) UnitVector(c2 Coords) Coords {
   // Find vector components from c1 -> c2
