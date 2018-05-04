@@ -52,7 +52,7 @@ func (c *Car) CarLoop() {
     // Send movement update request to World
     // TODO: replace this with real update
     posx += 5
-    inf := CarInfo{ ID:c.id, Pos:Coords{posx,0}, Vel:Coords{0,0}, Dir:Coords{1,0} }
+    inf := CarInfo{ Pos:Coords{posx,0}, Vel:Coords{0,0}, Dir:Coords{1,0} }
     c.sendChan <- inf
     //fmt.Println("Car", c.id, ": sent update", inf)
   }

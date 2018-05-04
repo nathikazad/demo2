@@ -10,7 +10,6 @@ import (
 
 // CarInfo - struct to contain position and velocity information for a simulated car.
 type CarInfo struct {
-  ID uint
   Pos Coords
   Vel Coords  // with respect to current position, offset for a single frame
   Dir Coords  // unit vector with respect to current position
@@ -61,7 +60,7 @@ func (w *World) RegisterCar(ID uint) (chan bool, chan CarInfo, bool) {
   }
 
   // Allocate new channels for registered car
-  w.CarStates[ID] = CarInfo{ ID:ID }  // TODO: randomize/control car location on startup
+  w.CarStates[ID] = CarInfo{}  // TODO: randomize/control car location on startup
   w.syncChans[ID] = make(chan bool, 1)  // Buffer up to one output
   w.recvChans[ID] = make(chan CarInfo, 1)  // Buffer up to one input
   return w.syncChans[ID], w.recvChans[ID], true
@@ -96,13 +95,13 @@ func (w *World) LoopWorld() {
     }
 
     // Car coroutines should now process current world state
-    for _, car := range w.CarStates {
+    for idx, car := range w.CarStates {
       w.webChan <- Message{
         Type:"Car",
-        ID:strconv.Itoa(int(car.ID)),
+        ID:strconv.Itoa(int(idx)),
         X:strconv.Itoa(int(car.Pos.X)),
         Y:strconv.Itoa(int(car.Pos.Y)),
-        Orientation:strconv.Itoa(int(Coords{0,0}.Angle(car.Dir))), 
+        Orientation:strconv.Itoa(int(Coords{0,0}.Angle(car.Dir))),
       }
     }
 
