@@ -154,6 +154,6 @@ func main() {
   // Begin JSON web output operation
   go web.LoopWebSrv()
 
-  for {}  // Do work in the coroutines
+  select{}  // Do work in the coroutines, main has nothing left to do
 }
 //*/
