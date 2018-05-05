@@ -19,7 +19,43 @@
         </div>
     </div>
 </div>
-<span id="mouse">Yolo</span>
+<div id="ui">
+    <span> User Address: </span>
+    <span id="user-address"></span> <br/>
+    <span> User Balance: </span>
+    <span id="user-balance"></span> 
+    <span>MC</span>
+    <input type="number" id="get-mc-field" step="100" value="100" min="0" max="900">
+    <button type="button" id="getMC">Get MC</button><span> 1 ETH = 100 MC</span> 
+    <br/>
+    <span> Approved for this Simulator: </span>
+    <span id="user-approved-mcs"></span> 
+    <span>MC</span>
+    <input type="number" id="approve-mc-field" step="1" value="0" min="0">
+    <button type="button" id="approve-mc-button">Approve MC</button>
+    <br/>
+    <span> Get a ride: </span>
+    <button type="button" id="set-start-point-button">Set Start Point</button>
+    <button type="button" id="set-end-point-button">Set End Point</button>
+    <input type="number" id="get-ride-amount-field" step="1" value="0" min="0">
+    <button type="button" id="get-ride-button">Get Ride</button>
+    <span id="get-ride-debug"></span> 
+    <br/>
+    
+    
+    <ul id="bid-queue">
+    </ul>
+</div>
+
+<div id="start-point" class="point">
+    <span class="dot"></span>
+    <span>start</span>
+</div>
+
+<div id="end-point" class="point">
+    <span class="dot"></span>
+    <span>end</span>
+</div>
 
 <footer class="page-footer">
 </footer>
