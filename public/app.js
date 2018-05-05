@@ -11,13 +11,6 @@ ws.addEventListener('message', function(e) {
     document.getElementById('Car'+msg.id).style.transform  = "rotate("+(parseInt(msg.orientation)+180)+"deg)";
 });
 
-<<<<<<< HEAD
-var example = document.getElementById('Map');
-example.onclick = function(e) {
-    var x = e.pageX - this.offsetLeft;
-    var y = e.pageY - this.offsetTop;
-    console.log(x+" "+y)
-=======
 window.addEventListener('load', function() {
     // Check if Web3 has been injected by the browser:
   if (typeof web3 !== 'undefined' ) {
@@ -32,12 +25,12 @@ window.addEventListener('load', function() {
   document.getElementById("getMC").onclick = getMCs;
   document.getElementById("approve-mc-button").onclick = approveMC;
   document.getElementById("get-ride-button").onclick = getRide;
-  document.getElementById("set-start-point-button").onclick = 
+  document.getElementById("set-start-point-button").onclick =
     function (e) {
       document.getElementById('Map').onclick = setStartPoint;
       document.getElementById("get-ride-debug").innerHTML = " Click anywhere on map to select start point";
     };
-  document.getElementById("set-end-point-button").onclick = 
+  document.getElementById("set-end-point-button").onclick =
     function (e) {
       document.getElementById('Map').onclick = setEndPoint;
       document.getElementById("get-ride-debug").innerHTML = " Click anywhere on map to select end point";
@@ -64,12 +57,12 @@ async function startApp(web3) {
 }
 
 async function updateView() {
-    
+
     document.getElementById("user-address").innerHTML = coinbase;
-    
+
     const userBalance = await moovCoin.balanceOf(coinbase);
     document.getElementById("user-balance").innerHTML = userBalance[0].toNumber();
-    
+
     const userApprovedMCs = await(moovCoin.allowance(coinbase, mrmAddress))
     document.getElementById("user-approved-mcs").innerHTML = userApprovedMCs[0].toNumber();
     document.getElementById("approve-mc-field").setAttribute("max", userBalance[0].toNumber() - userApprovedMCs[0].toNumber());
@@ -100,7 +93,7 @@ function getMCs(){
       return;
     }
     document.getElementById("get-mc-field").value = 0;
-    
+
     moovCoin.corruptExchange({from:coinbase, value:10000000000000000*amount}).then(function (txHash) {
       console.log('Transaction sent');
       console.dir(txHash);
@@ -116,7 +109,7 @@ async function approveMC(){
       return;
     }
     document.getElementById("approve-mc-field").value = 0;
-    
+
     moovCoin.increaseApproval(mrmAddress, amount, { from: coinbase }).then(function (txHash) {
       console.log('Transaction sent');
       console.dir(txHash);
@@ -148,7 +141,7 @@ async function getRide(){
       waitForTxToBeMined(txHash);
       document.getElementById("get-ride-amount-field").value = 0;
     });
-    
+
 }
 
 function getLocations(locString) {
@@ -180,5 +173,4 @@ function setEndPoint(e){
   document.getElementById('end-point').style.left = (e.pageX-5)+"px";
   document.getElementById("get-ride-debug").innerHTML = "";
   document.getElementById('Map').onclick = null;
->>>>>>> master
 }
