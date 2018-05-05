@@ -19,7 +19,7 @@ contract MoovRideManager {
   }
 
   // Mapping from each rider to a ride
-  mapping(address => ride) private rides;
+  mapping(address => ride) public rides;
 
   // Array to keep track of rides that are available to be picked up by cars
   address[] private availableRides;

@@ -87,6 +87,8 @@ func GetDigraphFromFile(fname string) (d *Digraph) {
       edge.Start = vert
       edge.End = vertNext
       d.Edges[edge.ID] = edge
+
+      vert.AdjEdges= append(vert.AdjEdges, *edge)
     }
 
     // Set starting edge weight based on distance
